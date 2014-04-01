@@ -1,0 +1,24 @@
+<!doctype html>
+<script src="http://js.pusher.com/2.1/pusher.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
+
+<title>Dino</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato">
+
+<div class=page>
+   <div>
+        <img src="static/img/dino.png" align="left" height=38 width=38 hspace=5> <span style=""><h1>Dino</h1></span>
+  </div>
+  <div class=metanav>
+   {% if not g.user.is_authenticated() %}
+   <a href="{{ url_for('login') }}">log in</a>
+  {% else %}
+  {{ g.user.username }} <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
+  </div>
+  {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+  {% endfor %}
+  {% block body %}{% endblock %}
+</div>

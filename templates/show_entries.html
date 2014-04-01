@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+   <div id='container'>
+    <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
+      <dl>
+        <dt>Product URL
+        <dd><input type=text size=200 name=url>
+        <dd><input type=submit value=Watch!>
+      </dl>
+    </form>
+    <script type="text/javascript">
+      var pusher = new Pusher('f241d9b56f2e2e4e8d24');
+      var chnl = 'private-haggler-{{ session.username }}'
+      var channel = pusher.subscribe(chnl);
+      channel.bind('priceup', function(data) {
+        update_(data);
+        });
+       function update_(data) {
+        var parent = $('div.center');
+        var len = parent.find('div.block').length;
+        var htm = '<div>'+
+                  '<div class="left"><img src='+data.img+' height=50 width=50 align=middle hspace=15></div>'+
+                  '<div class="block" id="'+len+'"><a href="'+data.url+'" style="text-decoration: none">'+
+                  '<h2>'+
+                  '<div class="title">'+data.title+'</div>'+
+                  data.message+
+                  '<h3>'+
+                  'just now'+
+                  '<img src="static/img/'+data.merchant+'.png" height=20 width=20 align=right hspace=10>'+
+                  '<img src="static/img/'+data.mag+'.png" height=15 width=15 alight=right hspace=10>'+
+                  '</h3>'+
+                 '</h2>'+
+                 '</div>'+
+                 '</div>';
+        $(htm).hide().prependTo(parent).fadeIn(3000);
+      }
+    </script>
+    <div class="center"> 
+     {% for e in entries %}
+      <div>
+      <div class="left"><img src={{ e[0].img|safe }} height=50 width=50 align=middle hspace=15></div>
+      <div class="block" id="{{ loop.index }}"><a href="{{ e[0].url }}" style="text-decoration: none">
+        <h2>
+        <div class="title">{{ e[0].title|safe }}</div>
+        {{ e[0].message|safe }}
+        <h3>
+        {{ e[1] }}
+        <img src="static/img/{{ e[0].merchant|safe }}.png" height=20 width=20 align=right hspace=10>
+        <img src="static/img/{{ e[0].mag| safe }}.png" height=15 width=15 align=right hspace=10>
+        </h3>
+        </h2>
+      </div>
+      </div>
+     {% endfor %}
+    </div>
+   </div>
+ {% endif %}
+{% endblock %}
